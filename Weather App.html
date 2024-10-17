@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="Weather App.css">
+</head>
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="enter city name" spellcheck="false">
+            <button><img src="https://tse2.mm.bing.net/th?id=OIP.vyhkMafwzVBCCSsgGJfI4wHaHa&pid=Api&P=0&h=180"></button>
+        </div>
+        <div class="error">
+            <p>Invalid city name</p>
+        </div>
+    <div class="weather">
+        <img src="https://www.pngmart.com/files/3/Weather-PNG-Photos.png" class="weather-icon">
+        <h1 class="temp">22℃</h1>
+        <h2 class="city">New York</h2>
+        <div class="details">
+            <div class="col">
+                <img src="https://cdn0.iconfinder.com/data/icons/weather-forecast-18/40/Precipitation_Humidity_Waves_Water_Weather_Forecast-128.png">
+                <div>
+                    <p class="humidity">50%</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="col">
+                <img src="https://cdn-icons-png.flaticon.com/256/182/182272.png">
+                <div>
+                    <p class="wind">15 km/hr</p>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const apiKey = "a1e4786eaf7c440cebfd94e2ffd3b005";
+    const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+    const searchBox = document.querySelector(".search input");
+    const searchBtn = document.querySelector(".search button");
+    const weatherIcon = document.querySelector(".weather-icon");
+    
+    async function checkWeather(city) {
+        const response = await fetch(apiUrl + encodeURIComponent(city) + `&appid=${apiKey}`);
+        
+        if (response.status == 404) {
+            document.querySelector(".error").style.display = "block";
+            document.querySelector(".weather").style.display = "none";
+        } else {
+            var data = await response.json();
+            document.querySelector(".city").innerHTML = data.name;
+            document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+            document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+            document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+            
+            // Set the weather icon based on weather condition
+            if (data.weather[0].main == "Clouds") {
+                weatherIcon.src = "https://www.pngmart.com/files/11/Weather-Cloud-PNG.png";
+            } else if (data.weather[0].main == "Clear") {
+                weatherIcon.src = "https://www.freeiconspng.com/uploads/weather-icon-png-23.png";
+            } else if (data.weather[0].main == "Rain") {
+                weatherIcon.src = "https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/1502598/cloud-with-rain-clipart-md.png";
+            } else if (data.weather[0].main == "Drizzle") {
+                weatherIcon.src = "https://cdn3d.iconscout.com/3d/premium/thumb/drizzle-8268788-6612893.png";
+            } else if (data.weather[0].main == "Mist") {
+                weatherIcon.src = "https://static.vecteezy.com/system/resources/previews/015/119/413/original/fog-ambient-long-black-background-free-png.png";
+            }
+    
+            document.querySelector(".weather").style.display = "block";
+            document.querySelector(".error").style.display = "none";
+        }
+    }
+    
+    searchBtn.addEventListener("click", () => {
+        checkWeather(searchBox.value.trim()); // Ensure no extra spaces in city name
+    });
+    </script>
+    
+    
+</body>
+</html>
